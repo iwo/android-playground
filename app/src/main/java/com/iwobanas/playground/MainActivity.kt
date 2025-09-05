@@ -14,25 +14,27 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.navigation3.runtime.NavEntry
 import androidx.navigation3.runtime.NavKey
+import androidx.navigation3.runtime.entry
+import androidx.navigation3.runtime.entryProvider
+import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.ui.NavDisplay
 import com.iwobanas.playground.data.NotesRepository
 import com.iwobanas.playground.data.model.Note
 import com.iwobanas.playground.ui.theme.PlaygroundTheme
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.serialization.Serializable
 import javax.inject.Inject
 
-sealed interface NavigationKey {
-    data object NotesList : NavigationKey
-    data class NoteDetails(val note: Note) : NavigationKey //TODO: use note ID after introducing ViewModels
-}
+@Serializable
+data object NotesListKey : NavKey
+
+@Serializable
+data class NoteDetailsKey(val note: Note) : NavKey //TODO: use note ID after introducing ViewModels
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -45,25 +47,23 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             PlaygroundTheme {
-                val backStack =
-                    remember { mutableStateListOf<NavigationKey>(NavigationKey.NotesList) }
+                val backStack = rememberNavBackStack(NotesListKey)
 
                 NavDisplay(
                     backStack = backStack,
                     onBack = { backStack.removeLastOrNull() },
-                    entryProvider = { key ->
-                        when (key) {
-                            NavigationKey.NotesList -> NavEntry(key) {
-                                val notes by notesRepository.notes.collectAsStateWithLifecycle(
-                                    emptyList(),
-                                    this
-                                )
-                                NotesList(notes = notes, onClick = {backStack.add(NavigationKey.NoteDetails( note = it))})
-                            }
-
-                            is NavigationKey.NoteDetails -> NavEntry(key) {
-                                NoteDetails(key.note)
-                            }
+                    entryProvider = entryProvider {
+                        entry<NotesListKey> {
+                            val notes by notesRepository.notes.collectAsStateWithLifecycle(
+                                emptyList(),
+                                this@MainActivity
+                            )
+                            NotesList(
+                                notes = notes,
+                                onClick = { backStack.add(NoteDetailsKey(note = it)) })
+                        }
+                        entry<NoteDetailsKey> { key ->
+                            NoteDetails(key.note)
                         }
                     }
                 )
