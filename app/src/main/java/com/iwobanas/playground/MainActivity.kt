@@ -7,21 +7,32 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation3.runtime.NavEntry
+import androidx.navigation3.runtime.NavKey
+import androidx.navigation3.ui.NavDisplay
 import com.iwobanas.playground.data.NotesRepository
 import com.iwobanas.playground.data.model.Note
 import com.iwobanas.playground.ui.theme.PlaygroundTheme
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
+
+sealed interface NavigationKey {
+    data object NotesList : NavigationKey
+    data class NoteDetails(val note: Note) : NavigationKey //TODO: use note ID after introducing ViewModels
+}
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -34,8 +45,28 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             PlaygroundTheme {
-                val notes by notesRepository.notes.collectAsStateWithLifecycle(emptyList(), this)
-                NotesList(notes)
+                val backStack =
+                    remember { mutableStateListOf<NavigationKey>(NavigationKey.NotesList) }
+
+                NavDisplay(
+                    backStack = backStack,
+                    onBack = { backStack.removeLastOrNull() },
+                    entryProvider = { key ->
+                        when (key) {
+                            NavigationKey.NotesList -> NavEntry(key) {
+                                val notes by notesRepository.notes.collectAsStateWithLifecycle(
+                                    emptyList(),
+                                    this
+                                )
+                                NotesList(notes = notes, onClick = {backStack.add(NavigationKey.NoteDetails( note = it))})
+                            }
+
+                            is NavigationKey.NoteDetails -> NavEntry(key) {
+                                NoteDetails(key.note)
+                            }
+                        }
+                    }
+                )
             }
         }
     }
@@ -43,7 +74,10 @@ class MainActivity : ComponentActivity() {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun NotesList(notes: List<Note>) {
+fun NotesList(
+    notes: List<Note>,
+    onClick: (Note) -> Unit,
+) {
     Scaffold(
         topBar = {
             TopAppBar(
@@ -57,7 +91,9 @@ fun NotesList(notes: List<Note>) {
                 .padding(16.dp)
         ) {
             items(items = notes) { note ->
-                Text(text = note.text)
+                Card(onClick = { onClick(note) }) {
+                    Text(text = note.text)
+                }
             }
         }
     }
@@ -70,7 +106,8 @@ private fun NotesListPreview() {
         NotesList(
             (1..5).map {
                 Note(id = it, text = "Note $it")
-            }
+            },
+            onClick = {},
         )
     }
 }
