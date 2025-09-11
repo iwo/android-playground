@@ -21,4 +21,7 @@ dependencyResolutionManagement {
 
 rootProject.name = "Playground"
 include(":app")
- 
+include(":feature:noteslist-api")
+include(":feature:noteslist-impl")
+include(":core:navigation")
+include(":core:data")

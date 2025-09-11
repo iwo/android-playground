@@ -23,15 +23,14 @@ import androidx.navigation3.runtime.entry
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.ui.NavDisplay
+import com.iwobanas.core.navigation.EntryProviderInstaller
+import com.iwobanas.noteslist.api.NotesListKey
 import com.iwobanas.playground.data.NotesRepository
-import com.iwobanas.playground.data.model.Note
+import com.iwobanas.core.data.model.Note
 import com.iwobanas.playground.ui.theme.PlaygroundTheme
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.serialization.Serializable
 import javax.inject.Inject
-
-@Serializable
-data object NotesListKey : NavKey
 
 @Serializable
 data class NoteDetailsKey(val note: Note) : NavKey //TODO: use note ID after introducing ViewModels
@@ -41,6 +40,9 @@ class MainActivity : ComponentActivity() {
 
     @Inject
     lateinit var notesRepository: NotesRepository
+
+    @Inject
+    lateinit var entryProviderBuilders: Set<@JvmSuppressWildcards EntryProviderInstaller>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -53,7 +55,7 @@ class MainActivity : ComponentActivity() {
                     backStack = backStack,
                     onBack = { backStack.removeLastOrNull() },
                     entryProvider = entryProvider {
-                        entry<NotesListKey> {
+                        /*entry<NotesListKey> {
                             val notes by notesRepository.notes.collectAsStateWithLifecycle(
                                 emptyList(),
                                 this@MainActivity
@@ -61,10 +63,12 @@ class MainActivity : ComponentActivity() {
                             NotesList(
                                 notes = notes,
                                 onClick = { backStack.add(NoteDetailsKey(note = it)) })
-                        }
+                        }*/
                         entry<NoteDetailsKey> { key ->
                             NoteDetails(key.note)
                         }
+
+                        entryProviderBuilders.forEach { builder -> this.builder() }
                     }
                 )
             }

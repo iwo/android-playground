@@ -1,6 +1,6 @@
 package com.iwobanas.playground.data
 
-import com.iwobanas.playground.data.model.Note
+import com.iwobanas.core.data.model.Note
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
 import javax.inject.Inject
