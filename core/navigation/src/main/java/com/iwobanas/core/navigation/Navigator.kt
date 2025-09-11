@@ -10,13 +10,15 @@ typealias EntryProviderInstaller = EntryProviderBuilder<NavKey>.() -> Unit
 
 @ActivityRetainedScoped
 class Navigator(startDestination: NavKey) {
-    val backStack : SnapshotStateList<NavKey> = mutableStateListOf(startDestination)
 
-    fun goTo(destination: NavKey){
+    //TODO: persist nav stack state e.g. rememberNavBackStack()
+    val backStack: SnapshotStateList<NavKey> = mutableStateListOf(startDestination)
+
+    fun goTo(destination: NavKey) {
         backStack.add(destination)
     }
 
-    fun goBack(){
+    fun goBack() {
         backStack.removeLastOrNull()
     }
 }

@@ -22,12 +22,13 @@ import com.iwobanas.noteslist.impl.viewmodel.NotesListViewModel
 
 @Composable
 fun NotesListScreen(
+    onClick: (Note) -> Unit,
     viewModel: NotesListViewModel = viewModel()
 ) {
     val notes by viewModel.notes.collectAsState(emptyList())
     NotesList(
         notes = notes,
-        onClick = {}
+        onClick = onClick,
     )
 }
 

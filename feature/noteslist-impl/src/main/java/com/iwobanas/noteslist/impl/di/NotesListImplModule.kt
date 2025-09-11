@@ -2,6 +2,8 @@ package com.iwobanas.noteslist.impl.di
 
 import androidx.navigation3.runtime.entry
 import com.iwobanas.core.navigation.EntryProviderInstaller
+import com.iwobanas.core.navigation.Navigator
+import com.iwobanas.notedetails.api.NoteDetailsKey
 import com.iwobanas.noteslist.api.NotesListKey
 import com.iwobanas.noteslist.impl.ui.NotesListScreen
 import dagger.Module
@@ -14,14 +16,12 @@ import dagger.multibindings.IntoSet
 @InstallIn(ActivityRetainedComponent::class)
 object NotesListImplModule {
 
-    //TODO get navigator as parameter
-
     @IntoSet
     @Provides
-    fun provideEntryProviderInstaller(): EntryProviderInstaller =
+    fun provideEntryProviderInstaller(navigator: Navigator): EntryProviderInstaller =
         {
             entry<NotesListKey> {
-                NotesListScreen()
+                NotesListScreen(onClick = { navigator.goTo(NoteDetailsKey(it)) })
             }
         }
 }
