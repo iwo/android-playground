@@ -36,6 +36,7 @@ android {
 }
 
 dependencies {
+    implementation(project(":core:data"))
 
     implementation(libs.dagger.hilt.android)
     implementation(libs.androidx.navigation3.runtime)

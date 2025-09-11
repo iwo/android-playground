@@ -1,15 +1,10 @@
-package com.iwobanas.playground.data
+package com.iwobanas.noteslist.impl.data
 
 import com.iwobanas.core.data.model.Note
+import com.iwobanas.noteslist.api.NotesRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
 import javax.inject.Inject
-
-interface NotesRepository {
-    val notes: Flow<List<Note>>
-
-    suspend fun getNoteById(id: Int): Note?
-}
 
 class NotesRepositoryImpl @Inject constructor() : NotesRepository {
 
