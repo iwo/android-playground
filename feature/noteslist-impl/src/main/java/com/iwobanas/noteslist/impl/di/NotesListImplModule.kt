@@ -21,7 +21,7 @@ object NotesListImplModule {
     fun provideEntryProviderInstaller(navigator: Navigator): EntryProviderInstaller =
         {
             entry<NotesListKey> {
-                NotesListScreen(onClick = { navigator.goTo(NoteDetailsKey(it)) })
+                NotesListScreen(onClick = { navigator.goTo(NoteDetailsKey(it.id)) })
             }
         }
 }

@@ -41,6 +41,7 @@ dependencies {
     implementation(project(":core:data"))
     implementation(project(":core:navigation"))
     implementation(project(":feature:notedetails-api"))
+    implementation(project(":feature:noteslist-api"))
 
     implementation(libs.dagger.hilt.android)
     implementation(libs.androidx.navigation3.runtime)

@@ -7,14 +7,30 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.iwobanas.core.data.model.Note
+import com.iwobanas.notedetails.impl.viewmodel.NoteDetailsViewModel
+
+@Composable
+fun NoteDetailsScreen(
+    noteId: Int,
+    viewModel: NoteDetailsViewModel = hiltViewModel { factory: NoteDetailsViewModel.Factory ->
+        factory.create(noteId)
+    }
+) {
+    val note by viewModel.note.collectAsState(null)
+
+    NoteDetails(note)
+}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun NoteDetails(note: Note) {
+fun NoteDetails(note: Note?) {
     Scaffold(
         topBar = {
             TopAppBar(
@@ -23,7 +39,7 @@ fun NoteDetails(note: Note) {
         }
     ) { paddingValues ->
         Text(
-            text = note.text,
+            text = note?.text ?: "Loading...",
             modifier = Modifier
                 .padding(paddingValues)
                 .padding(16.dp)
