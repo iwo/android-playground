@@ -15,7 +15,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.iwobanas.core.data.model.Note
 import com.iwobanas.noteslist.impl.viewmodel.NotesListViewModel
 
@@ -23,7 +23,7 @@ import com.iwobanas.noteslist.impl.viewmodel.NotesListViewModel
 @Composable
 fun NotesListScreen(
     onClick: (Note) -> Unit,
-    viewModel: NotesListViewModel = viewModel()
+    viewModel: NotesListViewModel = hiltViewModel()
 ) {
     val notes by viewModel.notes.collectAsState(emptyList())
     NotesList(
