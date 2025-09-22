@@ -1,3 +1,9 @@
 package com.iwobanas.core.data.model
 
-data class Note(val id: Int, val text: String)
+import kotlinx.serialization.Serializable
+
+@JvmInline
+@Serializable
+value class NoteId(val id: Int)
+
+data class Note(val id: NoteId, val text: String)

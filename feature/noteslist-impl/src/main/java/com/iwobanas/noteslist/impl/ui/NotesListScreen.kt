@@ -17,6 +17,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.iwobanas.core.data.model.Note
+import com.iwobanas.core.data.model.NoteId
 import com.iwobanas.noteslist.impl.viewmodel.NotesListViewModel
 
 
@@ -65,7 +66,7 @@ private fun NotesListPreview() {
     MaterialTheme {
         NotesList(
             (1..5).map {
-                Note(id = it, text = "Note $it")
+                Note(id = NoteId(it), text = "Note $it")
             },
             onClick = {},
         )

@@ -2,6 +2,7 @@ package com.iwobanas.notedetails.impl.viewmodel
 
 import androidx.lifecycle.ViewModel
 import com.iwobanas.core.data.model.Note
+import com.iwobanas.core.data.model.NoteId
 import com.iwobanas.noteslist.api.NotesRepository
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
@@ -13,12 +14,15 @@ import kotlinx.coroutines.flow.flow
 @HiltViewModel(assistedFactory = NoteDetailsViewModel.Factory::class)
 class NoteDetailsViewModel @AssistedInject constructor(
     repository: NotesRepository,
-    @Assisted noteId: Int
+    // Assisted injection doesn't support value classes https://github.com/google/dagger/issues/4613
+    @Assisted noteIdInt: Int
 ) : ViewModel() {
+
+    val noteId = NoteId(noteIdInt)
 
     @AssistedFactory
     interface Factory {
-        fun create(noteId: Int): NoteDetailsViewModel
+        fun create(noteIdInt: Int): NoteDetailsViewModel
     }
 
     val note: Flow<Note?> = flow {

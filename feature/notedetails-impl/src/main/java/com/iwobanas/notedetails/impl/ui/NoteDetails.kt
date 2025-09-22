@@ -14,13 +14,14 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.iwobanas.core.data.model.Note
+import com.iwobanas.core.data.model.NoteId
 import com.iwobanas.notedetails.impl.viewmodel.NoteDetailsViewModel
 
 @Composable
 fun NoteDetailsScreen(
-    noteId: Int,
+    noteId: NoteId,
     viewModel: NoteDetailsViewModel = hiltViewModel { factory: NoteDetailsViewModel.Factory ->
-        factory.create(noteId)
+        factory.create(noteId.id)
     }
 ) {
     val note by viewModel.note.collectAsState(null)
@@ -52,7 +53,7 @@ fun NoteDetails(note: Note?) {
 private fun NoteDetailsPreview() {
     MaterialTheme {
         NoteDetails(
-            Note(id = 123, text = "Very interesting note")
+            Note(id = NoteId(123), text = "Very interesting note")
         )
     }
 }
